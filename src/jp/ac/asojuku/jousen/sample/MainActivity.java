@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
 		dbclass = new DBclass(this);
 		db = dbclass.getWritableDatabase();
 
-		if(dbclass.getRecordCount(db) == true){
+		if(dbclass.getRecordCount(db)){
 			//アイテムの挿入
 			dbclass.insertItem(db,"1", "スピードアップ", "100", "一定時間自分の移動速度が上昇します", "speedup.png", "0");
 			dbclass.insertItem(db,"2", "スピードダウン", "400", "一定時間顔の移動速度が減少します", "speeddown.png", "0");

@@ -85,15 +85,51 @@ public class DBclass extends SQLiteOpenHelper {
 		db.execSQL(sql, new String[]{sns,word});
 	}
 
-	//アイテム更新
-	
+	//アイテム追加
+	public void updateAddItem(SQLiteDatabase db,String id){
+        String sql = "SELECT count FROM item WHERE id = '"  + id + "'";
+        SQLiteCursor cursor = (SQLiteCursor)db.rawQuery(sql, null);
+        cursor.moveToFirst();
+
+        int count = cursor.getInt(0);
+        count = count + 1;
+
+		String sql2 = "UPDATE item SET count = " + String.valueOf(count) + " WHERE id = '" + id + "'";
+		db.execSQL(sql2);
+	}
+
+	//アイテム減少(使用した時の処理に)
+	public void updateMinusItem(SQLiteDatabase db,String id){
+        String sql = "SELECT count FROM item WHERE id = '"  + id + "'";
+        SQLiteCursor cursor = (SQLiteCursor)db.rawQuery(sql, null);
+        cursor.moveToFirst();
+
+        int count = cursor.getInt(0);
+        count = count - 1;
+
+		String sql2 = "UPDATE item SET count = " + String.valueOf(count) + " WHERE id = '" + id + "'";
+		db.execSQL(sql2);
+	}
+
 	//ポイント更新
-	
+	public void updatePoint(SQLiteDatabase db,int addpoint){
+        String sql = "SELECT point FROM point WHERE _id = 1";
+        SQLiteCursor cursor = (SQLiteCursor)db.rawQuery(sql, null);
+        cursor.moveToFirst();
+
+        int point = cursor.getInt(0);
+        point = point + addpoint;
+
+		String sql2 = "UPDATE point SET point = " + String.valueOf(point);
+		db.execSQL(sql2);
+	}
+
 	//レコード数を数えるメソッド（データ未挿入判別に使用）
 	public boolean getRecordCount(SQLiteDatabase db) {
 		try{
-        String sql = "SELECT COUNT(*) FROM point";
+        String sql = "SELECT * FROM point";
         SQLiteCursor cursor = (SQLiteCursor)db.rawQuery(sql, null);
+        cursor.moveToFirst();
 
         String result = cursor.getString(cursor.getColumnIndex("_id"));
         Log.v("log", result);
