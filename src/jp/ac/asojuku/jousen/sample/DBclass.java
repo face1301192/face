@@ -87,28 +87,14 @@ public class DBclass extends SQLiteOpenHelper {
 
 	//アイテム追加
 	public void updateAddItem(SQLiteDatabase db,String id){
-        String sql = "SELECT count FROM item WHERE id = '"  + id + "'";
-        SQLiteCursor cursor = (SQLiteCursor)db.rawQuery(sql, null);
-        cursor.moveToFirst();
-
-        int count = cursor.getInt(0);
-        count = count + 1;
-
-		String sql2 = "UPDATE item SET count = " + String.valueOf(count) + " WHERE id = '" + id + "'";
-		db.execSQL(sql2);
+		String sql = "UPDATE item SET count = count + 1 WHERE id = '" + id + "'";
+		db.execSQL(sql);
 	}
 
 	//アイテム減少(使用した時の処理に)
 	public void updateMinusItem(SQLiteDatabase db,String id){
-        String sql = "SELECT count FROM item WHERE id = '"  + id + "'";
-        SQLiteCursor cursor = (SQLiteCursor)db.rawQuery(sql, null);
-        cursor.moveToFirst();
-
-        int count = cursor.getInt(0);
-        count = count - 1;
-
-		String sql2 = "UPDATE item SET count = " + String.valueOf(count) + " WHERE id = '" + id + "'";
-		db.execSQL(sql2);
+		String sql = "UPDATE item SET count = count - 1 WHERE id = '" + id + "'";
+		db.execSQL(sql);
 	}
 
 	//ポイント更新
@@ -122,6 +108,79 @@ public class DBclass extends SQLiteOpenHelper {
 
 		String sql2 = "UPDATE point SET point = " + String.valueOf(point);
 		db.execSQL(sql2);
+	}
+
+	//アイテム呼び出し(SELECT)
+	//戻り値としてアイテムのテーブル内容を配列で返す
+	//result[0]=id,result[1]=name,result[2]=value,result[3]=detail,result[4]=icon,result[5]=count
+	public String[] getItem(SQLiteDatabase db,String id){
+		String sql = "SELECT id,name,value,detail,icon,count FROM item WHERE id='"+ id +"'";
+		SQLiteCursor cursor = (SQLiteCursor)db.rawQuery(sql, null);
+		cursor.moveToFirst();
+
+		String result[] = {cursor.getString(0),cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5)};
+
+		return result;
+	}
+
+	//ポイント呼び出し(SELECT)
+	//戻り値としてint型でポイントを返す
+	public int getPoint(SQLiteDatabase db){
+		String sql = "SELECT point FROM point";
+		SQLiteCursor cursor = (SQLiteCursor)db.rawQuery(sql, null);
+		cursor.moveToFirst();
+
+		int result = cursor.getInt(0);
+
+		return result;
+	}
+
+	//クリアポイント呼び出し(SELECT)
+	//戻り値としてステージに対応したポイントをint型で返す
+	//※5ステージ目のものが最大値となっています。
+	//※levelの値が5より大きい場合は自動的にレベル5に対応したクリアポイントを返します。
+	public int getClear_point(SQLiteDatabase db,int level){
+		if(level > 5){
+			level = 5;
+		}
+		String sql = "SELECT bonus_point FROM clear_point WHERE level='"+ level +"'";
+		SQLiteCursor cursor = (SQLiteCursor)db.rawQuery(sql, null);
+		cursor.moveToFirst();
+
+		int result = cursor.getInt(0);
+
+		return result;
+	}
+
+	//利き手呼び出し(SELECT)
+	//戻り値をint型で返す
+	public int[] getHanded(SQLiteDatabase db){
+		String sql = "SELECT handed FROM handed";
+		SQLiteCursor cursor = (SQLiteCursor)db.rawQuery(sql, null);
+		cursor.moveToFirst();
+
+		int result[] = new int[2];
+
+		result[0] = cursor.getInt(0);
+		cursor.moveToNext();
+		result[1] = cursor.getInt(0);
+
+		return result;
+	}
+
+	//共有呼び出し(SELECT)
+	//戻り値をString型で記載内容を返す
+	//※sns=1 facebook
+	//※sns=2 twitter
+	public String getShare(SQLiteDatabase db,int sns){
+
+		String sql = "SELECT word FROM share";
+		SQLiteCursor cursor = (SQLiteCursor)db.rawQuery(sql, null);
+		cursor.moveToFirst();
+
+		String result = cursor.getString(0);
+
+		return result;
 	}
 
 	//レコード数を数えるメソッド（データ未挿入判別に使用）

@@ -46,6 +46,8 @@ public class MainActivity extends Activity {
 			dbclass.insertShare(db,"2", "顔から逃げろ!!!!顔が迫ってくる!今すぐアプリをダウンロードして逃げよう!twitterで共有するとアイテムも貰えるよ!");
 		}
 
+		//デバッグ(ポイント処理)
+		dbclass.updatePoint(db, -500);
 	}
 
 	@Override
